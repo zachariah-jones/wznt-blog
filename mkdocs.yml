@@ -1,1 +1,7 @@
-site_name: My Docs
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.top
+    - search.suggest
+    - search.highlight
