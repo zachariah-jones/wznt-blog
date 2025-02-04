@@ -1,3 +1,5 @@
+site_name: WIZNET
+
 theme:
   name: material
   features:
