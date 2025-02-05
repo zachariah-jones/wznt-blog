@@ -1,0 +1,38 @@
+/* Make the logo 2x bigger */
+.md-header__button.md-logo img {
+    height: 160px !important;  /* Doubled from 80px */
+    width: auto !important;
+    padding-right: 20px; /* Adjust spacing */
+}
+
+/* Make the WIZNET text 2x bigger */
+.md-header__title {
+    font-size: 2rem !important;  /* Increase font size */
+    font-weight: bold;
+}
+
+/* Import hacker font for "WIZNET" */
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+.md-header__title {
+    font-family: 'Share Tech Mono', monospace !important;
+    font-size: 2.5rem !important;
+    font-weight: bold;
+}
+
+/* Command-line style tagline */
+.md-header__title::after {
+    content: "└─$ An IT Blog for nerds by Zachariah Jones";
+    white-space: pre; /* Keeps the line break */
+    font-family: 'Fira Code', monospace; /* Kali-like font */
+    font-size: 1rem;
+    font-weight: normal;
+    color: #39ff14; /* Bright green like a terminal */
+    display: block; /* Ensures proper spacing */
+    margin-top: -10px; /* Adjust positioning to fit header */
+    padding-left: 5px; /* Small left padding for alignment */
+}
+
+/* Import Fira Code font */
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code&display=swap');
+
