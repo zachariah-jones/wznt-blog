@@ -5,3 +5,9 @@
     padding-right: 15px; /* Small padding for spacing */
 }
 
+/* Ensure dark mode applies globally */
+:root {
+    --md-default-bg-color: #121212 !important;  /* Dark mode background */
+    --md-default-fg-color: #ffffff !important;  /* White text */
+}
+
