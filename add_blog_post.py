@@ -2,10 +2,11 @@ import os
 import requests
 import base64
 import datetime
+import subprocess
 
-
-BLOG_DIR = "docs/blog/posts"
-GITHUB_REPO = "zachariah-jones/wznt-blog"
+# ✅ Configure these variables
+BLOG_DIR = "docs/blog/posts/"
+GITHUB_REPO = "zachariah-jones/wznt-blog"  # Change this to your repo
 BRANCH = "main"
 GITHUB_TOKEN = os.getenv("GH_PAT_WIZNET")  # GitHub Token from Environment Variable
 
@@ -16,7 +17,11 @@ os.makedirs(BLOG_DIR, exist_ok=True)
 def get_blog_post():
     title = input("Enter the blog post title: ").strip()
     filename = title.lower().replace(" ", "-") + ".md"
-    filepath = os.path.join(BLOG_DIR, filename)
+    filepath = os.path.join(BLOG_DIR, filename).replace("\\", "/")  # ✅ Fixes Windows path issues
+
+    # ✅ Ask user for tags (comma-separated)
+    tags_input = input("Enter tags (comma-separated, e.g., cybersecurity, hacking, python): ").strip()
+    tags = [tag.strip() for tag in tags_input.split(",") if tag.strip()]
 
     print("\nPaste your blog content below. Type EOF on a new line when done:\n")
     content = []
@@ -30,11 +35,12 @@ def get_blog_post():
             print("\n❌ Input interrupted. Exiting.")
             exit(1)
 
-    # Convert to Markdown format with metadata
+    # ✅ Convert to properly formatted Markdown with YAML metadata
     markdown_content = f"""---
-title: "{title}"
+title: {title}
 date: {datetime.date.today()}
-tags: []
+tags:
+{chr(10).join([f"  - {tag}" for tag in tags])}  # ✅ Formats YAML tags properly
 ---
 
 # {title}
@@ -42,7 +48,7 @@ tags: []
 {'\n'.join(content)}
 """
 
-    # Save file
+    # ✅ Save file
     with open(filepath, "w", encoding="utf-8") as file:
         file.write(markdown_content)
 
@@ -50,40 +56,28 @@ tags: []
     return filename, filepath
 
 # ✅ Function to commit & push to GitHub
-def push_to_github(filename, filepath):
-    url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{filepath}"
+def push_to_git(filename, filepath):
+    try:
+        print("\n✅ Staging ALL changes (forced to prevent pull issues)...")
+        subprocess.run(["git", "add", "--all"], check=True)
 
-    headers = {
-        "Authorization": f"token {GITHUB_TOKEN}",
-        "Accept": "application/vnd.github.v3+json"
-    }
+        commit_message = f"📢 New Blog Post: {filename.replace('-', ' ').replace('.md', '').title()} | {datetime.date.today()}"
+        print(f"📝 Committing with message: '{commit_message}'")
+        subprocess.run(["git", "commit", "-m", commit_message], check=True)
 
-    # Check if file exists in the repo
-    response = requests.get(url, headers=headers)
-    if response.status_code == 200:
-        sha = response.json()["sha"]  # File exists, so update
-    else:
-        sha = None  # File does not exist, create new
+        print("\n🔄 Pulling latest changes from GitHub...")
+        subprocess.run(["git", "pull", "origin", "main", "--rebase"], check=True)
 
-    with open(filepath, "rb") as file:
-        content_b64 = base64.b64encode(file.read()).decode("utf-8")
+        print("🚀 Pushing changes to GitHub...")
+        subprocess.run(["git", "push", "origin", "main"], check=True)
 
-    payload = {
-        "message": f"Added/Updated blog post: {filename}",
-        "content": content_b64,
-        "branch": BRANCH
-    }
-    if sha:
-        payload["sha"] = sha  # Required for updates
+        print(f"✅ Successfully pushed '{filename}' to GitHub!")
 
-    response = requests.put(url, headers=headers, json=payload)
-
-    if response.status_code in [200, 201]:
-        print(f"✅ Successfully published {filename} to GitHub!")
-    else:
-        print(f"❌ Error publishing to GitHub: {response.json()}")
+    except subprocess.CalledProcessError as e:
+        print(f"\n❌ Git operation failed: {e}")
+        print("Manually resolve any conflicts and try again.")
 
 # ✅ Run the script
 if __name__ == "__main__":
     filename, filepath = get_blog_post()
-    push_to_github(filename, filepath)
+    push_to_git(filename, filepath)
