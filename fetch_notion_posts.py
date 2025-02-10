@@ -4,15 +4,14 @@ import base64
 from notion_client import Client
 from markdownify import markdownify as md
 
-# Fetch secrets from environment variables
+# Load Notion API Key and Database ID from environment variables
 NOTION_API_KEY = os.getenv("NOTION_TOKEN")
 DATABASE_ID = os.getenv("NOTION_DATABASE_ID")
 GITHUB_TOKEN = os.getenv("GH_PAT_WIZNET")
 
-# Validate required secrets
+# Validate required variables
 if not NOTION_API_KEY or not DATABASE_ID or not GITHUB_TOKEN:
-    print("❌ ERROR: Missing required environment variables.")
-    print("Ensure NOTION_DATABASE_ID, NOTION_TOKEN, and GH_PAT_WIZNET are set.")
+    print("❌ ERROR: Missing required arguments. Ensure Notion Database ID, API Token, and GitHub PAT are passed.")
     exit(1)
 
 # Initialize Notion client
@@ -33,7 +32,7 @@ def fetch_notion_posts():
         return response.json()["results"]
     else:
         print(f"❌ Error fetching Notion posts: {response.text}")
-        exit(1)
+        return []
 
 # Convert Notion content to Markdown
 def notion_to_markdown(page):
@@ -70,7 +69,6 @@ def push_to_github(title, content):
         print(f"✅ Successfully published: {title}")
     else:
         print(f"❌ Error publishing to GitHub: {response.text}")
-        exit(1)
 
 # Main execution
 posts = fetch_notion_posts()
