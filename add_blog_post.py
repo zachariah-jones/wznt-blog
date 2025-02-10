@@ -1,14 +1,11 @@
 import os
-import requests
-import base64
 import datetime
 import subprocess
 
-# ✅ Configure these variables
+# ✅ Blog directory and GitHub repo details
 BLOG_DIR = "docs/blog/posts/"
-GITHUB_REPO = "zachariah-jones/wznt-blog"  # Change this to your repo
+GITHUB_REPO = "zachariah-jones/wznt-blog"
 BRANCH = "main"
-GITHUB_TOKEN = os.getenv("GH_PAT_WIZNET")  # GitHub Token from Environment Variable
 
 # ✅ Ensure the blog directory exists
 os.makedirs(BLOG_DIR, exist_ok=True)
@@ -17,11 +14,11 @@ os.makedirs(BLOG_DIR, exist_ok=True)
 def get_blog_post():
     title = input("Enter the blog post title: ").strip()
     filename = title.lower().replace(" ", "-") + ".md"
-    filepath = os.path.join(BLOG_DIR, filename).replace("\\", "/")  # ✅ Fixes Windows path issues
+    filepath = os.path.join(BLOG_DIR, filename).replace("\\", "/")  # Fix Windows path issues
 
     # ✅ Ask user for tags (comma-separated)
     tags_input = input("Enter tags (comma-separated, e.g., cybersecurity, hacking, python): ").strip()
-    tags = ", ".join([f'"{tag.strip()}"' for tag in tags_input.split(",") if tag.strip()])  # ✅ Fixes YAML format
+    tags = [tag.strip() for tag in tags_input.split(",") if tag.strip()]  # Fix YAML format
 
     print("\nPaste your blog content below. Type EOF on a new line when done:\n")
     content = []
@@ -39,7 +36,7 @@ def get_blog_post():
     markdown_content = f"""---
 title: "{title}"
 date: "{datetime.date.today()}"
-tags: [{tags}]
+tags: {tags}
 ---
 
 # {title}
@@ -57,7 +54,7 @@ tags: [{tags}]
 # ✅ Function to commit & push to GitHub
 def push_to_git(filename, filepath):
     try:
-        print("\n✅ Staging ALL changes (forced to prevent pull issues)...")
+        print("\n✅ Staging ALL changes...")
         subprocess.run(["git", "add", "--all"], check=True)
 
         commit_message = f"📢 New Blog Post: {filename.replace('-', ' ').replace('.md', '').title()} | {datetime.date.today()}"
