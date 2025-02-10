@@ -1,12 +1,12 @@
 ---
-title: "Test Blog Post 3"
+title: "Test Automation Script"
 date: 2025-02-10
 tags:
   - testing
 
 ---
 
-# Test Blog Post 3
+# Test Automation Script
 
 ---
 title: "Final Test Post"
