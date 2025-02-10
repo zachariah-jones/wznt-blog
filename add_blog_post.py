@@ -2,23 +2,19 @@ import os
 import datetime
 import subprocess
 
-# ✅ Blog directory and GitHub repo details
+# ✅ Blog directory
 BLOG_DIR = "docs/blog/posts/"
-GITHUB_REPO = "zachariah-jones/wznt-blog"
-BRANCH = "main"
-
-# ✅ Ensure the blog directory exists
 os.makedirs(BLOG_DIR, exist_ok=True)
 
-# ✅ Function to get user input
+# ✅ Function to create a blog post
 def get_blog_post():
     title = input("Enter the blog post title: ").strip()
     filename = title.lower().replace(" ", "-") + ".md"
-    filepath = os.path.join(BLOG_DIR, filename).replace("\\", "/")  # Fix Windows path issues
+    filepath = os.path.join(BLOG_DIR, filename).replace("\\", "/")  # Fix Windows paths
 
-    # ✅ Ask user for tags (comma-separated)
-    tags_input = input("Enter tags (comma-separated, e.g., cybersecurity, hacking, python): ").strip()
-    tags = [tag.strip() for tag in tags_input.split(",") if tag.strip()]  # Ensure valid YAML list
+    # ✅ Ask for tags (comma-separated)
+    tags_input = input("Enter tags (comma-separated, e.g., security, python, automation): ").strip()
+    tags = ", ".join([tag.strip() for tag in tags_input.split(",") if tag.strip()])  # MkDocs Blog expects CSV tags
 
     print("\nPaste your blog content below. Type EOF on a new line when done:\n")
     content = []
@@ -32,12 +28,12 @@ def get_blog_post():
             print("\n❌ Input interrupted. Exiting.")
             exit(1)
 
-    # ✅ Fix: Ensure `date` is in correct YAML format & tags are a proper list
+    # ✅ Properly formatted front matter (MkDocs Material Blog Plugin)
     markdown_content = f"""---
 title: "{title}"
-date: {datetime.date.today()}
-tags:
-{''.join([f"  - {tag}\n" for tag in tags])}
+date: {datetime.date.today()}  # ✅ Ensures correct ISO format for MkDocs
+tags: [{tags}]  # ✅ Ensures tags are properly formatted
+description: ""
 ---
 
 # {title}
@@ -52,10 +48,10 @@ tags:
     print(f"\n✅ Blog post saved: {filepath}")
     return filename, filepath
 
-# ✅ Function to commit & push to GitHub
-def push_to_git(filename, filepath):
+# ✅ Function to commit & push
+def push_to_git(filename):
     try:
-        print("\n✅ Staging ALL changes...")
+        print("\n✅ Staging changes...")
         subprocess.run(["git", "add", "--all"], check=True)
 
         commit_message = f"📢 New Blog Post: {filename.replace('-', ' ').replace('.md', '').title()} | {datetime.date.today()}"
@@ -77,4 +73,4 @@ def push_to_git(filename, filepath):
 # ✅ Run the script
 if __name__ == "__main__":
     filename, filepath = get_blog_post()
-    push_to_git(filename, filepath)
+    push_to_git(filename)
