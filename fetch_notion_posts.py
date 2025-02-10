@@ -1,19 +1,25 @@
-import os
+import sys
 import requests
 import base64
 from notion_client import Client
 from markdownify import markdownify as md
 
-# Load Notion API Key and Database ID from environment variables
-NOTION_API_KEY = os.getenv("NOTION_TOKEN")
-RAW_DATABASE_ID = os.getenv("NOTION_DATABASE_ID", "")
+# Read secrets from command-line arguments
+if len(sys.argv) < 4:
+    print("❌ ERROR: Missing required arguments. Ensure Notion Database ID, API Token, and GitHub PAT are passed.")
+    sys.exit(1)
 
-# Ensure Database ID is cleaned (removes newlines, spaces, etc.)
-DATABASE_ID = RAW_DATABASE_ID.replace("\n", "").replace(" ", "").strip()
+DATABASE_ID = sys.argv[1].strip()
+NOTION_API_KEY = sys.argv[2].strip()
+GITHUB_TOKEN = sys.argv[3].strip()
 
-# Debugging: Print database ID length
-print(f"Database ID (sanitized): {DATABASE_ID}")
+# Debugging - Ensure ID is formatted correctly
+print(f"Database ID: '{DATABASE_ID}'")
 print(f"Database ID Length: {len(DATABASE_ID)}")
+
+if len(DATABASE_ID) != 32:
+    print("❌ ERROR: Database ID is incorrect. Check GitHub Secrets.")
+    sys.exit(1)
 
 # Initialize Notion client
 notion = Client(auth=NOTION_API_KEY)
@@ -24,7 +30,7 @@ def fetch_notion_posts():
     headers = {
         "Authorization": f"Bearer {NOTION_API_KEY}",
         "Content-Type": "application/json",
-        "Notion-Version": "2022-06-28"  # Latest stable version
+        "Notion-Version": "2022-06-28"
     }
 
     response = requests.post(url, headers=headers)
@@ -54,7 +60,7 @@ def push_to_github(title, content):
     commit_message = f"Added new blog post: {title}"
 
     github_headers = {
-        "Authorization": f"token {os.getenv('GH_PAT_WIZNET')}",
+        "Authorization": f"token {GITHUB_TOKEN}",
         "Accept": "application/vnd.github.v3+json"
     }
 
