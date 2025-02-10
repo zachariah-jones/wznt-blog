@@ -32,10 +32,10 @@ def get_blog_post():
             print("\n❌ Input interrupted. Exiting.")
             exit(1)
 
-    # ✅ Convert to properly formatted Markdown with YAML metadata
+    # ✅ Fix: Ensure `date` is not in quotes (MkDocs requirement)
     markdown_content = f"""---
 title: "{title}"
-date: "{datetime.date.today()}"
+date: {datetime.date.today()}  # ✅ Proper date format (no quotes)
 tags: {tags}
 ---
 
