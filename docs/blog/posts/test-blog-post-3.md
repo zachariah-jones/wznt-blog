@@ -1,12 +1,12 @@
 ---
-title: "Test Blog Post 2"
+title: "Test Blog Post 3"
 date: 2025-02-10
 tags:
   - testing
 
 ---
 
-# Test Blog Post 2
+# Test Blog Post 3
 
 ---
 title: "Final Test Post"
