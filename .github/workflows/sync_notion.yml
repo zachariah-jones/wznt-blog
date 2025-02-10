@@ -1,1 +1,24 @@
+name: Fetch Notion Posts & Publish to Blog
+on:
+  schedule:
+    - cron: "*/5 * * * *"  # Runs every 5 minutes
+  workflow_dispatch:  # Allows manual triggering
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: pip install requests markdownify notion-client
+
+      - name: Fetch Notion Data & Commit to GitHub
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+          GH_PAT: ${{ secrets.GH_PAT_WIZNET }}
+        run: |
+          python fetch_notion_posts.py
 
