@@ -24,7 +24,7 @@ jobs:
 
       - name: Fetch Notion Data & Commit to GitHub
         env:
-          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
-          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
-          GH_PAT_WIZNET: ${{ secrets.GH_PAT_WIZNET }}
+          NOTION_TOKEN: "${{ secrets.NOTION_TOKEN }}"
+          NOTION_DATABASE_ID: "${{ secrets.NOTION_DATABASE_ID }}"
+          GH_PAT_WIZNET: "${{ secrets.GH_PAT_WIZNET }}"
         run: python fetch_notion_posts.py
