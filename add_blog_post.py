@@ -18,7 +18,7 @@ def get_blog_post():
 
     # ✅ Ask user for tags (comma-separated)
     tags_input = input("Enter tags (comma-separated, e.g., cybersecurity, hacking, python): ").strip()
-    tags = [tag.strip() for tag in tags_input.split(",") if tag.strip()]  # Fix YAML format
+    tags = [tag.strip() for tag in tags_input.split(",") if tag.strip()]  # Ensure valid YAML list
 
     print("\nPaste your blog content below. Type EOF on a new line when done:\n")
     content = []
@@ -32,11 +32,12 @@ def get_blog_post():
             print("\n❌ Input interrupted. Exiting.")
             exit(1)
 
-    # ✅ Fix: Ensure `date` is not in quotes (MkDocs requirement)
+    # ✅ Fix: Ensure `date` is in correct YAML format & tags are a proper list
     markdown_content = f"""---
 title: "{title}"
-date: {datetime.date.today()}  # ✅ Proper date format (no quotes)
-tags: {tags}
+date: {datetime.date.today()}
+tags:
+{''.join([f"  - {tag}\n" for tag in tags])}
 ---
 
 # {title}
