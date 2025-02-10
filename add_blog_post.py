@@ -12,8 +12,10 @@ def get_blog_post():
     filepath = os.path.join(BLOG_DIR, filename).replace("\\", "/")  # Windows-safe paths
 
     # ✅ Ensure proper YAML front matter syntax
-    tags_input = input("Enter tags (comma-separated, e.g., security, python, automation): ").strip()
-    tags = [tag.strip() for tag in tags_input.split(",") if tag.strip()]  # Convert to a list
+    categories_input = input("Enter categories (comma-separated, e.g., security, python, automation): ").strip()
+    categories = [cat.strip() for cat in categories_input.split(",") if cat.strip()]  # Convert to a list
+
+    description = input("Enter a short description for the post: ").strip()
 
     print("\nPaste your blog content below. Type EOF on a new line when done:\n")
     content = []
@@ -27,12 +29,13 @@ def get_blog_post():
             print("\n❌ Input interrupted. Exiting.")
             exit(1)
 
-    # ✅ YAML front matter (Proper MkDocs Format)
+    # ✅ Corrected YAML metadata for MkDocs blog plugin
     markdown_content = f"""---
 title: "{title}"
-date: {datetime.date.today()}  # ✅ Ensures proper date formatting
-tags:
-  - {("\n  - ").join(tags)}  # ✅ Ensures correct YAML list format
+date: {datetime.date.today().isoformat()}
+description: "{description}"
+categories:
+  - {("\n  - ").join(categories)}
 ---
 
 # {title}
@@ -50,26 +53,15 @@ tags:
 # ✅ Git commit & push function
 def push_to_git(filename):
     try:
-        print("\n🔄 Checking for unstaged changes...")
-        unstaged_changes = subprocess.run(["git", "diff", "--quiet"], check=False).returncode != 0
-
-        if unstaged_changes:
-            print("⚠️ Unstaged changes detected. Stashing changes before pulling...")
-            subprocess.run(["git", "stash"], check=True)
-
-        print("\n🔄 Pulling latest changes from GitHub to avoid conflicts...")
-        subprocess.run(["git", "pull", "origin", "main", "--rebase"], check=True)
-
-        if unstaged_changes:
-            print("🔄 Reapplying stashed changes...")
-            subprocess.run(["git", "stash", "pop"], check=True)
-
-        print("\n✅ Staging changes...")
+        print("\n✅ Checking for unstaged changes...")
         subprocess.run(["git", "add", "--all"], check=True)
 
         commit_message = f"📢 New Blog Post: {filename.replace('-', ' ').replace('.md', '').title()} | {datetime.date.today()}"
         print(f"📝 Committing with message: '{commit_message}'")
         subprocess.run(["git", "commit", "-m", commit_message], check=True)
+
+        print("\n🔄 Pulling latest changes from GitHub before pushing...")
+        subprocess.run(["git", "pull", "--rebase"], check=True)
 
         print("🚀 Pushing changes to GitHub...")
         subprocess.run(["git", "push", "origin", "main"], check=True)
