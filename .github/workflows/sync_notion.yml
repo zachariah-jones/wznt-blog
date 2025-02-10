@@ -22,3 +22,7 @@ jobs:
         run: |
           python fetch_notion_posts.py
 
+- name: Debug Secrets
+  run: |
+    echo "NOTION_DATABASE_ID=${{ secrets.NOTION_DATABASE_ID }}"
+    echo "NOTION_TOKEN=${{ secrets.NOTION_TOKEN }}"
