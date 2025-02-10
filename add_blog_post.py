@@ -33,7 +33,7 @@ def get_blog_post():
     # Convert to Markdown format with metadata
     markdown_content = f"""---
 title: "{title}"
-date: "{datetime.date.today()}"
+date: {datetime.date.today()}
 tags: []
 ---
 
