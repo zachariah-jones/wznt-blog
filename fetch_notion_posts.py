@@ -6,8 +6,14 @@ from markdownify import markdownify as md
 
 # Load Notion API Key and Database ID from environment variables
 NOTION_API_KEY = os.getenv("NOTION_TOKEN")
-DATABASE_ID = os.getenv("NOTION_DATABASE_ID")
-GITHUB_TOKEN = os.getenv("GH_PAT_WIZNET")
+RAW_DATABASE_ID = os.getenv("NOTION_DATABASE_ID", "")
+
+# Ensure Database ID is cleaned (removes newlines, spaces, etc.)
+DATABASE_ID = RAW_DATABASE_ID.replace("\n", "").replace(" ", "").strip()
+
+# Debugging: Print database ID length
+print(f"Database ID (sanitized): {DATABASE_ID}")
+print(f"Database ID Length: {len(DATABASE_ID)}")
 
 # Initialize Notion client
 notion = Client(auth=NOTION_API_KEY)
@@ -48,7 +54,7 @@ def push_to_github(title, content):
     commit_message = f"Added new blog post: {title}"
 
     github_headers = {
-        "Authorization": f"token {GITHUB_TOKEN}",
+        "Authorization": f"token {os.getenv('GH_PAT_WIZNET')}",
         "Accept": "application/vnd.github.v3+json"
     }
 
