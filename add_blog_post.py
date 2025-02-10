@@ -2,19 +2,18 @@ import os
 import datetime
 import subprocess
 
-# ✅ Blog directory
+# ✅ Define the blog post directory
 BLOG_DIR = "docs/blog/posts/"
 os.makedirs(BLOG_DIR, exist_ok=True)
 
-# ✅ Function to create a blog post
 def get_blog_post():
     title = input("Enter the blog post title: ").strip()
     filename = title.lower().replace(" ", "-") + ".md"
-    filepath = os.path.join(BLOG_DIR, filename).replace("\\", "/")  # Fix Windows paths
+    filepath = os.path.join(BLOG_DIR, filename).replace("\\", "/")  # Windows-safe paths
 
-    # ✅ Ask for tags (comma-separated)
+    # ✅ Ensure proper YAML front matter syntax
     tags_input = input("Enter tags (comma-separated, e.g., security, python, automation): ").strip()
-    tags = ", ".join([tag.strip() for tag in tags_input.split(",") if tag.strip()])  # MkDocs Blog expects CSV tags
+    tags = [tag.strip() for tag in tags_input.split(",") if tag.strip()]  # Convert to a list
 
     print("\nPaste your blog content below. Type EOF on a new line when done:\n")
     content = []
@@ -28,11 +27,12 @@ def get_blog_post():
             print("\n❌ Input interrupted. Exiting.")
             exit(1)
 
-    # ✅ Properly formatted front matter (MkDocs Material Blog Plugin)
+    # ✅ YAML front matter (Proper MkDocs Format)
     markdown_content = f"""---
 title: "{title}"
-date: {datetime.date.today()}  # ✅ Ensures correct ISO format for MkDocs
-tags: [{tags}]  # ✅ Ensures tags are properly formatted
+date: "{datetime.date.today().isoformat()}"  # ✅ Correct ISO format
+tags:
+  - {("\n  - ").join(tags)}  # ✅ Ensures correct YAML list format
 description: ""
 ---
 
@@ -41,14 +41,14 @@ description: ""
 {'\n'.join(content)}
 """
 
-    # ✅ Save file
+    # ✅ Save the blog post
     with open(filepath, "w", encoding="utf-8") as file:
         file.write(markdown_content)
 
     print(f"\n✅ Blog post saved: {filepath}")
     return filename, filepath
 
-# ✅ Function to commit & push
+# ✅ Git commit & push function
 def push_to_git(filename):
     try:
         print("\n✅ Staging changes...")
