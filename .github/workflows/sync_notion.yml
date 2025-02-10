@@ -19,12 +19,12 @@ jobs:
         run: |
           echo "Checking if secrets are available..."
           echo "NOTION_DATABASE_ID=${{ secrets.NOTION_DATABASE_ID }}"
-          echo "NOTION_TOKEN=${{ secrets.NOTION_TOKEN }}"
-          echo "GH_PAT_WIZNET=${{ secrets.GH_PAT_WIZNET }}"
+          echo "NOTION_DATABASE_ID Length: ${#NOTION_DATABASE_ID}"
 
       - name: Fetch Notion Data & Commit to GitHub
         env:
-          NOTION_TOKEN: "${{ secrets.NOTION_TOKEN }}"
-          NOTION_DATABASE_ID: "${{ secrets.NOTION_DATABASE_ID }}"
-          GH_PAT_WIZNET: "${{ secrets.GH_PAT_WIZNET }}"
-        run: python fetch_notion_posts.py
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+          GH_PAT_WIZNET: ${{ secrets.GH_PAT_WIZNET }}
+        run: |
+          python fetch_notion_posts.py
