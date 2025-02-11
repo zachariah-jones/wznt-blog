@@ -1,7 +1,14 @@
-/* Increase logo size but keep it responsive */
+/* Increase logo size while keeping it responsive */
 .md-header__button.md-logo img {
-    max-height: 120px !important; /* Increase size but let it scale */
+    max-height: 150px !important; /* Increase logo size */
     width: auto !important;
-    padding-right: 15px; /* Small padding for spacing */
+    padding-right: 15px;
 }
+
+/* Increase site title (WIZNET) font size */
+.md-header__title {
+    font-size: 1.5rem !important; /* Adjust as needed */
+    font-weight: bold !important;
+}
+
 
