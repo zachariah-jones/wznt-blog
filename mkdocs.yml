@@ -2,16 +2,17 @@ site_name: WIZNET
 
 nav:
   - Home: index.md
-  - Blog:
-      - Blog: blog/index.md
+  - Blog: blog/index.md
 
 theme:
   name: material
   logo: assets/images/wzntxyzlogo.png
   favicon: "favicon.ico"
   palette:
-    primary: black  # Replacing purple
-    accent: blue  # Or any color you prefer
+    scheme: slate  # Forces dark mode
+    primary: black
+    accent: blue
+
   font:
     text: "Inter"
     code: "JetBrains Mono"
